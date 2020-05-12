@@ -11,7 +11,7 @@ def device_output(*args):
     db = OrderDb()
 
     if request.method == 'GET':
-        if arguments.get('order_id'):
+        if arguments.get('id'):
             return jsonify(db.get_by_id(arguments.get('id')))
 
         else:
