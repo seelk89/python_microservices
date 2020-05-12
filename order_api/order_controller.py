@@ -15,7 +15,7 @@ def device_output(*args):
             return jsonify(db.get_by_id(arguments.get('id')))
 
         else:
-            return db.get_by_id(db.get_all())
+            return db.get_all()
 
     if request.method == 'PUT':
         db.update(request.json)
