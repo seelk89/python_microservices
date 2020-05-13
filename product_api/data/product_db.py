@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlite3 import Error
 
 
-class OrderDb:
+class ProductDb:
     def __init__(self):
         try:
-            self.con = sqlite3.connect(':memory:')
+            self.con = sqlite3.connect(':memory:', isolation_level=None)
 
             print('Database created in-memory')
 
@@ -21,15 +21,12 @@ class OrderDb:
         cursor_obj = self.con.cursor()
 
         try:
-            cursor_obj.execute('CREATE TABLE orders (id integer PRIMARY KEY, date text, customer_id integer, order_status text, order_lines integer)')
+            cursor_obj.execute(
+'CREATE TABLE products (id integer PRIMARY KEY, name text, price decimal , items_in_stock integer , items_reserved integer)')
 
             self.con.commit()
 
-            cursor_obj.execute('CREATE TABLE order_lines(id integer PRIMARY KEY, order_id integer, product_id integer, quantity integer)')
-
-            self.con.commit()
-
-            print('Tables created')
+            print('Table created')
 
         except sqlite3.Error as e:
             print('Table creation exception. {}'.format(e))
@@ -38,14 +35,15 @@ class OrderDb:
         cursor_obj = self.con.cursor()
 
         try:
-            insert_query = 'INSERT INTO orders (date, customer_id, order_lines) VALUES (?, ?, ?)'
-            values = (str(datetime.now), 1, 1,)
+            insert_query = 'INSERT INTO products (name, price, items_in_stock, items_reserved) VALUES (?, ?, ?, ?)'
 
+            values = ('Coke', 5, 20, 0,)
             cursor_obj.execute(insert_query, values)
 
-            insert_query = 'INSERT INTO order_lines (order_id, product_id, quantity) VALUES (?, ?, ?)'
-            values = (1, 1, 10,)
+            values = ('Faxe kondi', 10, 17, 0,)
+            cursor_obj.execute(insert_query, values)
 
+            values = ('Fanta', 7, 11, 0,)
             cursor_obj.execute(insert_query, values)
 
             print('Db seeded')
@@ -57,7 +55,7 @@ class OrderDb:
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'SELECT * FROM orders'
+            query = 'SELECT * FROM products'
             cursor_obj.execute(query)
 
             query_result = cursor_obj.fetchall()
@@ -67,13 +65,13 @@ class OrderDb:
         except sqlite3.Error as e:
             print('Select exception. {}'.format(e))
 
-    def get_by_id(self, id):
+    def get_by_id(self, product_id):
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'SELECT * FROM orders WHERE id = ?'
-            value = (id,)
-            cursor_obj.execute(query, value,)
+            query = 'SELECT * FROM products WHERE id = ?'
+            value = (product_id, )
+            cursor_obj.execute(query, value, )
 
             query_result = cursor_obj.fetchall()
 
@@ -82,34 +80,41 @@ class OrderDb:
         except sqlite3.Error as e:
             print('Select exception. {}'.format(e))
 
-    def update(self):
+    def update(self, name, price, items_in_stock, items_reserved, id):
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'UPDATE orders SET  = ? WHERE id = ?'
-            values = ()
-            cursor_obj.execute(query)
+            query = 'UPDATE products SET name = ?, price = ?, items_in_stock = ?, items_reserved = ?,  WHERE id = ?'
+            values = (name, price, items_in_stock, items_reserved, id, )
+            cursor_obj.execute(query, values)
+
+            return "Product was updated"
 
         except sqlite3.Error as e:
             print('Update exception. {}'.format(e))
 
-    def insert(self):
+    def insert(self, name, price, items_in_stock, items_reserved):
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'INSERT orders (date, customer_id, order_lines) VALUES (?, ?, ?)'
-            cursor_obj.execute(query)
+            insert_query = 'INSERT INTO products (name, price, items_in_stock, items_reserved) VALUES (?, ?, ?, ?)'
+            values = (name, price, items_in_stock, items_reserved, )
+            cursor_obj.execute(insert_query, values)
+
+            return "Product was created"
 
         except sqlite3.Error as e:
             print('Insert exception. {}'.format(e))
 
-    def delete(self, id):
+    def delete(self, product_id):
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'DELETE FROM orders WHERE id = ?'
-            values = (id,)
+            query = 'DELETE FROM products WHERE id = ?'
+            values = (product_id, )
             cursor_obj.execute(query, values)
+
+            return "Product was deleted"
 
         except sqlite3.Error as e:
             print('Delete exception. {}'.format(e))
