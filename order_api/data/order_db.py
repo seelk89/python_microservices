@@ -1,12 +1,14 @@
+import json
 import sqlite3
-from datetime import datetime
+from datetime import date
 from sqlite3 import Error
 
 
 class OrderDb:
     def __init__(self):
         try:
-            self.con = sqlite3.connect(':memory:')
+            # There might be a better solution than check_same_thread=False
+            self.con = sqlite3.connect(':memory:', check_same_thread=False)
 
             print('Database created in-memory')
 
@@ -36,14 +38,15 @@ class OrderDb:
 
     def __seed_db(self):
         cursor_obj = self.con.cursor()
+        today = date.today()
 
         try:
             insert_query = 'INSERT INTO orders (date, customer_id, order_lines) VALUES (?, ?, ?)'
 
-            values = (str(datetime.now), 1, 1,)
+            values = (today.strftime("%d/%m/%Y"), 1, 1,)
             cursor_obj.execute(insert_query, values)
 
-            values = (str(datetime.now), 2, 1,)
+            values = (today.strftime("%d/%m/%Y"), 2, 1,)
             cursor_obj.execute(insert_query, values)
 
             insert_query = 'INSERT INTO order_lines (order_id, product_id, quantity) VALUES (?, ?, ?)'
@@ -51,7 +54,7 @@ class OrderDb:
 
             cursor_obj.execute(insert_query, values)
 
-            print('Db seeded')
+            print('Database seeded')
 
         except sqlite3.Error as e:
             print('Insert exception. {}'.format(e))
@@ -65,7 +68,8 @@ class OrderDb:
 
             query_result = cursor_obj.fetchall()
 
-            return query_result
+            # Convert list to json
+            return json.dumps(query_result)
 
         except sqlite3.Error as e:
             print('Select exception. {}'.format(e))
