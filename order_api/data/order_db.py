@@ -42,7 +42,6 @@ class OrderDb:
 
         try:
             insert_query = 'INSERT INTO orders (date, customer_id, order_lines) VALUES (?, ?, ?)'
-
             values = (today.strftime("%d/%m/%Y"), 1, 1,)
             cursor_obj.execute(insert_query, values)
 
@@ -51,7 +50,6 @@ class OrderDb:
 
             insert_query = 'INSERT INTO order_lines (order_id, product_id, quantity) VALUES (?, ?, ?)'
             values = (1, 1, 10,)
-
             cursor_obj.execute(insert_query, values)
 
             print('Database seeded')
@@ -72,6 +70,8 @@ class OrderDb:
         cursor_obj = self.con.cursor()
 
         try:
+            # Try to join order_lines to the order they belong to
+            #query = 'SELECT * FROM orders JOIN order_lines ON order.order_lines = order_lines.order_id'
             query = 'SELECT * FROM orders'
             cursor_obj.execute(query)
 
@@ -110,12 +110,22 @@ class OrderDb:
         except sqlite3.Error as e:
             print('Update exception. {}'.format(e))
 
-    def insert(self, date, customer_id, order_lines):
+    def insert(self, date, customer_id, order_lines_product_id, order_lines_quantity):
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'INSERT INTO orders (date, customer_id, order_lines) VALUES (?, ?, ?)'
-            values = (date, customer_id, order_lines, )
+            query = 'INSERT INTO orders (date, customer_id, order_status) VALUES (?, ?, ?)'
+            values = (date, customer_id, 'shipped', )
+            cursor_obj.execute(query, values)
+
+            new_order_id = cursor_obj.lastrowid
+            query = 'INSERT INTO order_lines (order_id, product_id, quantity) VALUES (?, ?, ?)'
+            values = (new_order_id, order_lines_product_id, order_lines_quantity,)
+            cursor_obj.execute(query, values)
+
+            new_order_lines_id = cursor_obj.lastrowid
+            query = 'UPDATE orders SET order_lines = ? WHERE id = ?'
+            values = (new_order_lines_id, new_order_id, )
             cursor_obj.execute(query, values)
 
             return 'Order was created'

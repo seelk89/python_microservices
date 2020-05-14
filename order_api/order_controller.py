@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, jsonify, request
 from order_api.data.order_db import OrderDb
 
@@ -27,7 +28,25 @@ def device_output(*args):
 
     if request.method == 'POST':
         request_json = request.json
-        return order_db.insert(request_json['date'], request_json['customer_id'], request_json['order_lines'])
+
+        req_pro_api = requests.get('http://127.0.0.1:5002/product', params={'id': request_json['order_lines']['product_id']})
+        if req_pro_api.json()[0]['items_in_stock'] > request_json['order_lines']['quantity']:
+            print('Items are in stock')
+
+            req_cus_api = requests.get('http://127.0.0.1:5001/customer', params={'id': request_json['customer_id']})
+            if req_cus_api:
+                print('Customer exists')
+
+                if req_cus_api.json()[0]['credit_standing'] == 'good':
+                    print('Customer credit standing is good')
+
+                    return order_db.insert(request_json['date'], request_json['customer_id'], request_json['order_lines']['product_id'], request_json['order_lines']['quantity'])
+                else:
+                    print('Customer credit standing is bad')
+            else:
+                print('The customer does not exist')
+        else:
+            print('Items are not in stock')
 
     if request.method == 'DELETE':
         if arguments.get('id'):
@@ -36,4 +55,4 @@ def device_output(*args):
             'Id needed'
 
 
-app.run(host='0.0.0.0')
+app.run(host='127.0.0.1')
