@@ -1,12 +1,12 @@
 import sqlite3
-from datetime import datetime
 from sqlite3 import Error
 
 
 class ProductDb:
     def __init__(self):
         try:
-            self.con = sqlite3.connect(':memory:', isolation_level=None)
+            self.con = sqlite3.connect(':memory:', check_same_thread=False)
+            self.con.row_factory = self.__dict_factory
 
             print('Database created in-memory')
 
@@ -22,7 +22,7 @@ class ProductDb:
 
         try:
             cursor_obj.execute(
-'CREATE TABLE products (id integer PRIMARY KEY, name text, price decimal , items_in_stock integer , items_reserved integer)')
+                'CREATE TABLE products (id integer PRIMARY KEY, name text, price real , items_in_stock integer , items_reserved integer)')
 
             self.con.commit()
 
@@ -51,6 +51,15 @@ class ProductDb:
         except sqlite3.Error as e:
             print('Insert exception. {}'.format(e))
 
+    # For returning dictionaries rather than simply the values of the row
+    def __dict_factory(self, cursor, row):
+        d = {}
+
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+
+        return d
+
     def get_all(self):
         cursor_obj = self.con.cursor()
 
@@ -70,8 +79,8 @@ class ProductDb:
 
         try:
             query = 'SELECT * FROM products WHERE id = ?'
-            value = (product_id, )
-            cursor_obj.execute(query, value, )
+            value = (product_id,)
+            cursor_obj.execute(query, value,)
 
             query_result = cursor_obj.fetchall()
 
@@ -85,7 +94,7 @@ class ProductDb:
 
         try:
             query = 'UPDATE products SET name = ?, price = ?, items_in_stock = ?, items_reserved = ?,  WHERE id = ?'
-            values = (name, price, items_in_stock, items_reserved, id, )
+            values = (name, price, items_in_stock, items_reserved, id,)
             cursor_obj.execute(query, values)
 
             return "Product was updated"
@@ -98,7 +107,7 @@ class ProductDb:
 
         try:
             insert_query = 'INSERT INTO products (name, price, items_in_stock, items_reserved) VALUES (?, ?, ?, ?)'
-            values = (name, price, items_in_stock, items_reserved, )
+            values = (name, price, items_in_stock, items_reserved,)
             cursor_obj.execute(insert_query, values)
 
             return "Product was created"
@@ -111,7 +120,7 @@ class ProductDb:
 
         try:
             query = 'DELETE FROM products WHERE id = ?'
-            values = (product_id, )
+            values = (product_id,)
             cursor_obj.execute(query, values)
 
             return "Product was deleted"

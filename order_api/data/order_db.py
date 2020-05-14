@@ -1,4 +1,3 @@
-import json
 import sqlite3
 from datetime import date
 from sqlite3 import Error
@@ -9,6 +8,7 @@ class OrderDb:
         try:
             # There might be a better solution than check_same_thread=False
             self.con = sqlite3.connect(':memory:', check_same_thread=False)
+            self.con.row_factory = self.__dict_factory
 
             print('Database created in-memory')
 
@@ -59,6 +59,15 @@ class OrderDb:
         except sqlite3.Error as e:
             print('Insert exception. {}'.format(e))
 
+    # For returning dictionaries rather than simply the values of the row
+    def __dict_factory(self, cursor, row):
+        d = {}
+
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+
+        return d
+
     def get_all(self):
         cursor_obj = self.con.cursor()
 
@@ -68,8 +77,7 @@ class OrderDb:
 
             query_result = cursor_obj.fetchall()
 
-            # Convert list to json
-            return json.dumps(query_result)
+            return query_result
 
         except sqlite3.Error as e:
             print('Select exception. {}'.format(e))
