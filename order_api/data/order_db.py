@@ -137,6 +137,7 @@ class OrderDb:
         cursor_obj = self.con.cursor()
 
         try:
+            # Should delete order_lines belonging to the order aswell
             query = 'DELETE FROM orders WHERE id = ?'
             values = (id,)
             cursor_obj.execute(query, values)
