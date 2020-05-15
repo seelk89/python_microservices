@@ -27,7 +27,7 @@ class OrderDb:
 
             self.con.commit()
 
-            cursor_obj.execute('CREATE TABLE order_lines(id integer PRIMARY KEY, order_id integer, product_id integer, quantity integer)')
+            cursor_obj.execute('CREATE TABLE order_lines (id integer PRIMARY KEY, order_id integer, product_id integer, quantity integer)')
 
             self.con.commit()
 
@@ -137,8 +137,11 @@ class OrderDb:
         cursor_obj = self.con.cursor()
 
         try:
-            # Should delete order_lines belonging to the order aswell
             query = 'DELETE FROM orders WHERE id = ?'
+            values = (id,)
+            cursor_obj.execute(query, values)
+
+            query = 'DELETE FROM order_lines WHERE order_id = ?'
             values = (id,)
             cursor_obj.execute(query, values)
 
