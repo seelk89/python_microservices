@@ -1,8 +1,42 @@
+from __future__ import annotations
+
 import sqlite3
 from sqlite3 import Error
+from threading import Lock, Thread
+from typing import Optional
 
 
-class ProductDb:
+class SingletonMeta(type):
+    """
+    This is a thread-safe implementation of Singleton.
+    """
+
+    _instance: Optional[ProductDb] = None
+
+    _lock: Lock = Lock()
+    """
+    We now have a lock object that will be used to synchronize threads during
+    first access to the Singleton.
+    """
+
+    def __call__(cls, *args, **kwargs):
+        # Now, imagine that the program has just been launched. Since there's no
+        # Singleton instance yet, multiple threads can simultaneously pass the
+        # previous conditional and reach this point almost at the same time. The
+        # first of them will acquire lock and will proceed further, while the
+        # rest will wait here.
+        with cls._lock:
+            # The first thread to acquire the lock, reaches this conditional,
+            # goes inside and creates the Singleton instance. Once it leaves the
+            # lock block, a thread that might have been waiting for the lock
+            # release may then enter this section. But since the Singleton field
+            # is already initialized, the thread won't create a new object.
+            if not cls._instance:
+                cls._instance = super().__call__(*args, **kwargs)
+        return cls._instance
+
+
+class ProductDb(metaclass=SingletonMeta):
     def __init__(self):
         try:
             self.con = sqlite3.connect(':memory:', check_same_thread=False)
@@ -80,7 +114,7 @@ class ProductDb:
         try:
             query = 'SELECT * FROM products WHERE id = ?'
             value = (product_id,)
-            cursor_obj.execute(query, value,)
+            cursor_obj.execute(query, value, )
 
             query_result = cursor_obj.fetchall()
 
@@ -93,7 +127,7 @@ class ProductDb:
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'UPDATE products SET name = ?, price = ?, items_in_stock = ?, items_reserved = ?,  WHERE id = ?'
+            query = 'UPDATE products SET name = ?, price = ?, items_in_stock = ?, items_reserved = ? WHERE id = ?'
             values = (name, price, items_in_stock, items_reserved, id,)
             cursor_obj.execute(query, values)
 

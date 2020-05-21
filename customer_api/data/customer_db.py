@@ -1,8 +1,43 @@
+from __future__ import annotations
+
 import sqlite3
 from sqlite3 import Error
+from threading import Lock, Thread
+from typing import Optional
 
 
-class CustomerDb:
+class SingletonMeta(type):
+    """
+    This is a thread-safe implementation of Singleton.
+    """
+
+    _instance: Optional[CustomerDb] = None
+
+    _lock: Lock = Lock()
+    """
+    We now have a lock object that will be used to synchronize threads during
+    first access to the Singleton.
+    """
+
+    def __call__(cls, *args, **kwargs):
+        # Now, imagine that the program has just been launched. Since there's no
+        # Singleton instance yet, multiple threads can simultaneously pass the
+        # previous conditional and reach this point almost at the same time. The
+        # first of them will acquire lock and will proceed further, while the
+        # rest will wait here.
+        with cls._lock:
+            # The first thread to acquire the lock, reaches this conditional,
+            # goes inside and creates the Singleton instance. Once it leaves the
+            # lock block, a thread that might have been waiting for the lock
+            # release may then enter this section. But since the Singleton field
+            # is already initialized, the thread won't create a new object.
+            if not cls._instance:
+                cls._instance = super().__call__(*args, **kwargs)
+        return cls._instance
+
+
+class CustomerDb(metaclass=SingletonMeta):
+
     def __init__(self):
         try:
             # There might be a better solution than check_same_thread=False
@@ -78,7 +113,7 @@ class CustomerDb:
         try:
             query = 'SELECT * FROM customers WHERE id = ?'
             value = (id,)
-            cursor_obj.execute(query, value,)
+            cursor_obj.execute(query, value, )
 
             query_result = cursor_obj.fetchall()
 
@@ -91,7 +126,7 @@ class CustomerDb:
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'UPDATE customers SET date = ?, customer_id = ?, order_lines = ? WHERE id = ?'
+            query = 'UPDATE customers SET name = ?, email = ?, phone_number = ?, billing_address = ?, shipping_address = ?, credit_standing = ? WHERE id = ?'
             values = (name, email, phone_number, billing_address, shipping_address, credit_standing, id,)
             cursor_obj.execute(query, values)
 
@@ -104,7 +139,7 @@ class CustomerDb:
         cursor_obj = self.con.cursor()
 
         try:
-            query = 'INSERT INTO customers (date, customer_id, order_lines) VALUES (?, ?, ?)'
+            query = 'INSERT INTO customers (name, email, phone_number, billing_address, shipping_address, credit_standing) VALUES (?, ?, ?, ? ,?, ?)'
             values = (name, email, phone_number, billing_address, shipping_address, credit_standing,)
             cursor_obj.execute(query, values)
 

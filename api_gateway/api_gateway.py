@@ -27,7 +27,7 @@ def device_output(*args):
 
         if request.method == 'POST':
             request_json = request.json
-            requests.post('http://127.0.0.1:5000/order',
+            return requests.post('http://127.0.0.1:5000/order',
                           json={'date': request_json['date'], 'customer_id': request_json['customer_id'],
                                 'order_lines': request_json['order_lines']})
 
