@@ -1,8 +1,10 @@
 import json
 import threading
-from product_api.data.product_repository import ProductRepo
 
-import pika, os
+import os
+import pika
+
+from product_api.data.product_repository import ProductRepo
 
 
 class ProductListener(threading.Thread):
@@ -16,16 +18,16 @@ class ProductListener(threading.Thread):
         self.counter = counter
 
     def run(self):
-        if self.name == "create":
+        if self.name == 'create':
             self.order_created()
-        if self.name == "shipped":
+        if self.name == 'shipped':
             self.order_shipped()
-        if self.name == "canceled":
+        if self.name == 'canceled':
             self.order_canceled()
 
     def order_canceled(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)
@@ -49,7 +51,7 @@ class ProductListener(threading.Thread):
 
     def order_shipped(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)
@@ -73,7 +75,7 @@ class ProductListener(threading.Thread):
 
     def order_created(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)

@@ -7,17 +7,17 @@ from typing import Optional
 
 
 class SingletonMeta(type):
-    """
+    '''
     This is a thread-safe implementation of Singleton.
-    """
+    '''
 
     _instance: Optional[ProductDb] = None
 
     _lock: Lock = Lock()
-    """
+    '''
     We now have a lock object that will be used to synchronize threads during
     first access to the Singleton.
-    """
+    '''
 
     def __call__(cls, *args, **kwargs):
         # Now, imagine that the program has just been launched. Since there's no

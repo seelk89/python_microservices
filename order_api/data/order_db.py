@@ -3,24 +3,22 @@ from __future__ import annotations
 import sqlite3
 from datetime import date
 from sqlite3 import Error
-from threading import Lock, Thread
+from threading import Lock
 from typing import Optional
-
-from flask import json
 
 
 class SingletonMeta(type):
-    """
+    '''
     This is a thread-safe implementation of Singleton.
-    """
+    '''
 
     _instance: Optional[OrderDb] = None
 
     _lock: Lock = Lock()
-    """
+    '''
     We now have a lock object that will be used to synchronize threads during
     first access to the Singleton.
-    """
+    '''
 
     def __call__(cls, *args, **kwargs):
         # Now, imagine that the program has just been launched. Since there's no
@@ -126,7 +124,6 @@ class OrderDb(metaclass=SingletonMeta):
 
     def get_by_id(self, id):
         cursor_obj = self.con.cursor()
-        order_object = {}
         try:
             query = "SELECT id, date, customer_id, order_status FROM orders WHERE orders.id = ?"
             # query = 'SELECT * FROM orders LEFT JOIN order_lines ON orders.id = order_lines.order_id WHERE orders.id = ?'

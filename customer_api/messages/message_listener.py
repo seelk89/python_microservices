@@ -1,21 +1,20 @@
 import json
-
-import pika, os
 import threading
+
+import os
+import pika
+
 from customer_api.data.customer_repository import CustomerRepo
 
 
 class CustomerListener(threading.Thread):
     customer_repo = CustomerRepo()
 
-
     def __init__(self, threadID, name, counter):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.name = name
         self.counter = counter
-
-
 
     def run(self):
         if self.name == "create":
@@ -29,7 +28,7 @@ class CustomerListener(threading.Thread):
 
     def order_created(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)
@@ -53,7 +52,7 @@ class CustomerListener(threading.Thread):
 
     def order_rejected(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)
@@ -77,7 +76,7 @@ class CustomerListener(threading.Thread):
 
     def order_canceled(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)
@@ -101,7 +100,7 @@ class CustomerListener(threading.Thread):
 
     def order_shipped(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)

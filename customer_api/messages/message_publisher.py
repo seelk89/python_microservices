@@ -1,7 +1,8 @@
 import json
 
-import pika, os
-from pika import BlockingConnection, URLParameters
+import os
+import pika
+from pika import URLParameters
 
 
 class CustomerPublisher:
@@ -9,7 +10,7 @@ class CustomerPublisher:
 
     def __init__(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             self.params = pika.URLParameters(url)

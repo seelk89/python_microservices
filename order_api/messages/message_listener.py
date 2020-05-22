@@ -1,6 +1,9 @@
 import json
 import threading
-import pika, os
+
+import os
+import pika
+
 from order_api.data.order_repository import OrderRepo
 
 
@@ -14,14 +17,14 @@ class OrderListener(threading.Thread):
         self.counter = counter
 
     def run(self):
-        if self.name == "create":
+        if self.name == 'create':
             self.order_created()
-        if self.name == "reject":
+        if self.name == 'reject':
             self.order_rejected()
 
     def order_created(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)
@@ -45,7 +48,7 @@ class OrderListener(threading.Thread):
 
     def order_rejected(self):
         try:
-            # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
+            # Access the CLOUDAMQP_URL environment variable and parse it (fallback to localhost)
             url = os.environ.get('CLOUDAMQP_URL',
                                  'amqp://ffgzglpl:AT8pWl0aP_dfXSfKpT0pGdAms_rKSGm3@bloodhound.rmq.cloudamqp.com/ffgzglpl')
             params = pika.URLParameters(url)

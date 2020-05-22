@@ -1,4 +1,3 @@
-import json
 from aifc import Error
 
 from product_api.data.product_db import ProductDb
@@ -28,25 +27,25 @@ class ProductRepo:
                                         product_json['items_reserved'], product_id)
 
     def create_product(self, product_json):
-        return self.__product_db.insert(product_json["name"], product_json["price"], product_json["items_in_stock"],
-                                        product_json["items_reserved"])
+        return self.__product_db.insert(product_json['name'], product_json['price'], product_json['items_in_stock'],
+                                        product_json['items_reserved'])
 
     def delete_product(self, product_id):
         return self.__product_db.delete(product_id)
 
     def check_if_products_available(self, order_json):
-        for order_line in order_json["order_lines"]:
-            product = self.__product_db.get_by_id(order_line["product_id"])
+        for order_line in order_json['order_lines']:
+            product = self.__product_db.get_by_id(order_line['product_id'])
 
-            if int(product[0]["items_in_stock"]) < int(order_line["quantity"]):
+            if int(product[0]['items_in_stock']) < int(order_line['quantity']):
                 self.reject_order(order_json)
-                return "no good"
+                return 'No good'
 
-        for order_line in order_json["order_lines"]:
-            product = self.__product_db.get_by_id(order_line["product_id"])
-            product[0]["items_in_stock"] = int(product[0]["items_in_stock"]) - int(order_line["quantity"])
-            product[0]["items_reserved"] = int(product[0]["items_reserved"]) + int(order_line["quantity"])
-            self.update_product(product[0], product[0]["id"])
+        for order_line in order_json['order_lines']:
+            product = self.__product_db.get_by_id(order_line['product_id'])
+            product[0]['items_in_stock'] = int(product[0]['items_in_stock']) - int(order_line['quantity'])
+            product[0]['items_reserved'] = int(product[0]['items_reserved']) + int(order_line['quantity'])
+            self.update_product(product[0], product[0]['id'])
         self.accept_order(order_json)
 
     def accept_order(self, order_json):
@@ -56,14 +55,14 @@ class ProductRepo:
         self.product_publisher.order_rejected(order_json)
 
     def ship_order(self, order_json):
-        for order_line in order_json["order_lines"]:
-            product = self.__product_db.get_by_id(order_line["product_id"])
-            product[0]["items_reserved"] = int(product[0]["items_reserved"]) - int(order_line["quantity"])
-            self.update_product(product[0], product[0]["id"])
+        for order_line in order_json['order_lines']:
+            product = self.__product_db.get_by_id(order_line['product_id'])
+            product[0]['items_reserved'] = int(product[0]['items_reserved']) - int(order_line['quantity'])
+            self.update_product(product[0], product[0]['id'])
 
     def cancel_order(self, order_json):
-        for order_line in order_json["order_lines"]:
-            product = self.__product_db.get_by_id(order_line["product_id"])
-            product[0]["items_in_stock"] = int(product[0]["items_in_stock"]) + int(order_line["quantity"])
-            product[0]["items_reserved"] = int(product[0]["items_reserved"]) - int(order_line["quantity"])
-            self.update_product(product[0], product[0]["id"])
+        for order_line in order_json['order_lines']:
+            product = self.__product_db.get_by_id(order_line['product_id'])
+            product[0]['items_in_stock'] = int(product[0]['items_in_stock']) + int(order_line['quantity'])
+            product[0]['items_reserved'] = int(product[0]['items_reserved']) - int(order_line['quantity'])
+            self.update_product(product[0], product[0]['id'])

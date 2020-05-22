@@ -1,5 +1,5 @@
-import json
 from aifc import Error
+
 from customer_api.data.customer_db import CustomerDb
 from customer_api.messages.message_publisher import CustomerPublisher
 
@@ -36,32 +36,32 @@ class CustomerRepo:
         return self.__customer_db.delete(customer_id)
 
     def check_credit_standing(self, order_json):
-        customer = self.get_customer_by_id(order_json["customer_id"])
+        customer = self.get_customer_by_id(order_json['customer_id'])
         customer = customer[0]
         if customer:
             if customer['credit_standing'] == 'good':
                 customer['credit_standing'] = "bad"
-                self.__customer_db.update(customer["name"], customer["email"], customer["phone_number"],
-                                          customer["billing_address"], customer["shipping_address"],
-                                          'bad', customer["id"])
+                self.__customer_db.update(customer['name'], customer['email'], customer['phone_number'],
+                                          customer['billing_address'], customer['shipping_address'],
+                                          'bad', customer['id'])
                 self.customer_publisher.order_accepted(order_json)
             else:
                 self.customer_publisher.order_rejected(order_json)
 
     def reject_order(self, order_json):
-        customer = self.get_customer_by_id(order_json["customer_id"])
+        customer = self.get_customer_by_id(order_json['customer_id'])
         customer = customer[0]
-        customer['credit_standing'] = "good"
-        self.__customer_db.update(customer["name"], customer["email"], customer["phone_number"],
-                                  customer["billing_address"], customer["shipping_address"],
-                                  customer["credit_standing"], customer["id"])
+        customer['credit_standing'] = 'good'
+        self.__customer_db.update(customer['name'], customer['email'], customer['phone_number'],
+                                  customer['billing_address'], customer['shipping_address'],
+                                  customer['credit_standing'], customer['id'])
         self.customer_publisher.order_rejected(order_json)
 
     def status_change(self, order_json):
-        customer = self.get_customer_by_id(order_json["customer_id"])
+        customer = self.get_customer_by_id(order_json['customer_id'])
         customer = customer[0]
 
-        customer['credit_standing'] = "good"
-        self.__customer_db.update(customer["name"], customer["email"], customer["phone_number"],
-                                  customer["billing_address"], customer["shipping_address"],
-                                  "bad", customer["id"])
+        customer['credit_standing'] = 'good'
+        self.__customer_db.update(customer['name'], customer['email'], customer['phone_number'],
+                                  customer['billing_address'], customer['shipping_address'],
+                                  'bad', customer['id'])
