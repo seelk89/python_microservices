@@ -110,12 +110,15 @@ class OrderDb(metaclass=SingletonMeta):
         cursor_obj = self.con.cursor()
 
         try:
-            # Try to join order_lines to the order they belong to
-            # query = 'SELECT * FROM orders JOIN order_lines ON order.order_lines = order_lines.order_id'
             query = 'SELECT * FROM orders'
-            cursor_obj.execute(query)
-
-            query_result = cursor_obj.fetchall()
+            query_result = cursor_obj.execute(query).fetchall()
+            for row in query_result:
+                order_id = row["id"]
+                query = 'SELECT * FROM order_lines WHERE order_lines.order_id = ?'
+                value = (order_id,)
+                cursor_obj.execute(query, value, )
+                order_lines_result = cursor_obj.fetchall()
+                row['order_lines'] = order_lines_result
 
             return query_result
 
@@ -124,20 +127,19 @@ class OrderDb(metaclass=SingletonMeta):
 
     def get_by_id(self, id):
         cursor_obj = self.con.cursor()
+
         try:
-            query = "SELECT id, date, customer_id, order_status FROM orders WHERE orders.id = ?"
-            # query = 'SELECT * FROM orders LEFT JOIN order_lines ON orders.id = order_lines.order_id WHERE orders.id = ?'
-            # query = "SELECT *,((SELECT * FROM order_lines WHERE order_lines.order_id = orders.id) AS order_lines) AS order_lines FROM orders WHERE orders.id = ?"
+            query = 'SELECT id, date, customer_id, order_status FROM orders WHERE orders.id = ?'
             value = (id,)
             cursor_obj.execute(query, value, )
             query_result = cursor_obj.fetchall()
 
             order_id = query_result[0]["id"]
-            query2 = "SELECT * FROM order_lines WHERE order_lines.order_id = ?"
+            query2 = 'SELECT * FROM order_lines WHERE order_lines.order_id = ?'
             value2 = (order_id,)
             cursor_obj.execute(query2, value2, )
             order_lines_result = cursor_obj.fetchall()
-            query_result[0]["order_lines"] = order_lines_result
+            query_result[0]['order_lines'] = order_lines_result
 
             return query_result
 
@@ -168,7 +170,7 @@ class OrderDb(metaclass=SingletonMeta):
 
             for order_line in order_lines:
                 query = 'INSERT INTO order_lines (order_id, product_id, quantity) VALUES (?, ?, ?)'
-                values = (new_order_id, order_line["product_id"], order_line["quantity"],)
+                values = (new_order_id, order_line[0], order_line[1],)
                 cursor_obj.execute(query, values)
 
             return new_order_id
