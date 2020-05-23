@@ -4,7 +4,7 @@ import threading
 import os
 import pika
 
-from customer_api.data.customer_repository import CustomerRepo
+from data.customer_repository import CustomerRepo
 
 
 class CustomerListener(threading.Thread):

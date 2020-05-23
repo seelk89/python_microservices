@@ -1,7 +1,7 @@
 from aifc import Error
 
-from customer_api.data.customer_db import CustomerDb
-from customer_api.messages.message_publisher import CustomerPublisher
+from data.customer_db import CustomerDb
+from messages.message_publisher import CustomerPublisher
 
 
 class CustomerRepo:

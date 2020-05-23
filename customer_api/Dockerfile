@@ -1,11 +1,13 @@
 FROM python:alpine3.7
 
-COPY . /app
+COPY . /customer_api
 
-WORKDIR /app
+WORKDIR /customer_api
 
 RUN pip install -r requirements.txt
 
+ENV PYTHONPATH="$PYTHONPATH:/customer_api"
+
 EXPOSE 5001
 
-CMD python ./index.py
+CMD python ./customer_controller.py

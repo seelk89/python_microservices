@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
-from customer_api.data.customer_repository import CustomerRepo
-from customer_api.messages.message_listener import CustomerListener
+from data.customer_repository import CustomerRepo
+from messages.message_listener import CustomerListener
 
 app = Flask(__name__)
 
