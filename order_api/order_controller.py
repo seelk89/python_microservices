@@ -1,8 +1,7 @@
-import requests
 from flask import Flask, jsonify, request
-from order_api.data.order_db import OrderDb
-from order_api.data.order_repository import OrderRepo
-from order_api.messages.message_listener import OrderListener
+from data.order_repository import OrderRepo
+from messages.message_listener import OrderListener
+
 app = Flask(__name__)
 
 # Instance of our in-memory database
@@ -11,6 +10,7 @@ order_listener_create = OrderListener(1, "create", 1)
 order_listener_reject = OrderListener(1, "reject", 1)
 order_listener_create.start()
 order_listener_reject.start()
+
 
 @app.route('/order', methods=['GET', 'PUT', 'POST', 'DELETE'])
 def device_output(*args):
@@ -49,4 +49,5 @@ def device_output(*args):
             if arguments.get('id'):
                 return order_repo.ship_order(arguments.get('id'))
 
-app.run(host='127.0.0.1')
+
+app.run(host='0.0.0.0', port=5000)

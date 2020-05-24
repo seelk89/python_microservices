@@ -12,14 +12,14 @@ def device_output(*args):
     if arguments.get('api') == 'order':
         if request.method == 'GET':
             if arguments.get('id'):
-                return jsonify(requests.get('http://127.0.0.1:5000/order', params={'id': arguments.get('id')}).json())
+                return jsonify(requests.get('http://0.0.0.0:5000/order', params={'id': arguments.get('id')}).json())
             else:
-                return jsonify(requests.get('http://127.0.0.1:5000/order').json())
+                return jsonify(requests.get('http://0.0.0.0:5000/order').json())
 
         if request.method == 'PUT':
             if arguments.get('id'):
                 request_json = request.json
-                requests.put('http://127.0.0.1:5000/order', params={'id': arguments.get('id')},
+                requests.put('http://0.0.0.0:5000/order', params={'id': arguments.get('id')},
                              json={'date': request_json['date'], 'customer_id': request_json['customer_id'],
                                    'order_lines': request_json['order_lines']})
             else:
@@ -27,13 +27,13 @@ def device_output(*args):
 
         if request.method == 'POST':
             request_json = request.json
-            return requests.post('http://127.0.0.1:5000/order',
+            return requests.post('http://0.0.0.0:5000/order',
                           json={'date': request_json['date'], 'customer_id': request_json['customer_id'],
                                 'order_lines': request_json['order_lines']})
 
         if request.method == 'DELETE':
             if arguments.get('id'):
-                requests.delete('http://127.0.0.1:5000/order', params={'id': arguments.get('id')})
+                requests.delete('http://0.0.0.0:5000/order', params={'id': arguments.get('id')})
             else:
                 'Id needed'
 
@@ -41,14 +41,14 @@ def device_output(*args):
     if arguments.get('api') == 'product':
         if request.method == 'GET':
             if arguments.get('id'):
-                return jsonify(requests.get('http://127.0.0.1:5002/product', params={'id': arguments.get('id')}).json)
+                return jsonify(requests.get('http://0.0.0.0:5002/product', params={'id': arguments.get('id')}).json)
             else:
-                return jsonify(requests.get('http://127.0.0.1:5002/product').json())
+                return jsonify(requests.get('http://0.0.0.0:5002/product').json())
 
         if request.method == 'PUT':
             if arguments.get('id'):
                 request_json = request.json
-                requests.put('http://127.0.0.1:5002/product', params={'id': arguments.get('id')},
+                requests.put('http://0.0.0.0:5002/product', params={'id': arguments.get('id')},
                              json={'name': request.json['name'], 'price': request_json['price'],
                                    'items_in_stock': request_json['items_in_stock'],
                                    'items_reserved': request_json['items_reserved']})
@@ -57,14 +57,14 @@ def device_output(*args):
 
         if request.method == 'POST':
             request_json = request.json
-            requests.put('http://127.0.0.1:5002/product',
+            requests.put('http://0.0.0.0:5002/product',
                          json={'name': request.json['name'], 'price': request_json['price'],
                                'items_in_stock': request_json['items_in_stock'],
                                'items_reserved': request_json['items_reserved']})
 
         if request.method == 'DELETE':
             if arguments.get('id'):
-                requests.delete('http://127.0.0.1:5002/product', params={'id': arguments.get('id')})
+                requests.delete('http://0.0.0.0:5002/product', params={'id': arguments.get('id')})
             else:
                 'Id needed'
 

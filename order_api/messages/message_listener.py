@@ -4,7 +4,7 @@ import threading
 import os
 import pika
 
-from order_api.data.order_repository import OrderRepo
+from data.order_repository import OrderRepo
 
 
 class OrderListener(threading.Thread):

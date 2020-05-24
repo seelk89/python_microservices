@@ -1,3 +1,7 @@
-docker build -t customer_api:latest .
+pip freeze > requirements.txt
 
+docker build -t customer_api:latest .
 docker run --name customer_api -p 5001:5001 customer_api:latest
+
+docker build -t product_api:latest .
+docker run --name product_api -p 5002:5002 product_api:latest

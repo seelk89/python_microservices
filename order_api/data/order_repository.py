@@ -1,7 +1,7 @@
 from aifc import Error
 
-from order_api.data.order_db import OrderDb
-from order_api.messages.message_publisher import OrderPublisher
+from data.order_db import OrderDb
+from messages.message_publisher import OrderPublisher
 
 
 class OrderRepo:
