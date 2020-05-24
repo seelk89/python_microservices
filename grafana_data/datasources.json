@@ -1,0 +1,6 @@
+{
+    "name": "microservice_prometheus",
+    "type": "prometheus",
+    "url": "http://prometheus:9090",
+    "access": "server"
+}
