@@ -6,22 +6,37 @@ services:
     build:
       context: ./api_gateway
       dockerfile: ./Dockerfile
+    expose:
+      - 5003
+    ports:
+    - 5003:5003
 
   order_api:
     image: ${DOCKER_REGISTRY-}order_api
     build:
       context: ./order_api
       dockerfile: ./Dockerfile
-    restart: always
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
 
   product_api:
     image: ${DOCKER_REGISTRY-}product_api
     build:
       context: ./product_api
       dockerfile: ./Dockerfile
+    expose:
+      - 5002
+    ports:
+      - 5002:5002
 
   customer_api:
     image: ${DOCKER_REGISTRY-}customer_api
     build:
       context: ./customer_api
       dockerfile: ./Dockerfile
+    expose:
+      - 5001
+    ports:
+      - 5001:5001
