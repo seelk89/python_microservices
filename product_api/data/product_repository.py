@@ -1,7 +1,7 @@
 from aifc import Error
 
-from product_api.data.product_db import ProductDb
-from product_api.messages.message_publisher import ProductPublisher
+from data.product_db import ProductDb
+from messages.message_publisher import ProductPublisher
 
 
 class ProductRepo:

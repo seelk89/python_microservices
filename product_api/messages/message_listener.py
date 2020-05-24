@@ -4,7 +4,7 @@ import threading
 import os
 import pika
 
-from product_api.data.product_repository import ProductRepo
+from data.product_repository import ProductRepo
 
 
 class ProductListener(threading.Thread):

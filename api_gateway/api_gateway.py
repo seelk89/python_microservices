@@ -72,14 +72,14 @@ def device_output(*args):
     if arguments.get('api') == 'customer':
         if request.method == 'GET':
             if arguments.get('id'):
-                return jsonify(requests.get('http://127.0.0.1:5001/customer', params={'id': arguments.get('id')}).json)
+                return jsonify(requests.get('http://0.0.0.0:5001/customer', params={'id': arguments.get('id')}).json)
             else:
-                return jsonify(requests.get('http://127.0.0.1:5001/customer').json())
+                return jsonify(requests.get('http://0.0.0.0:5001/customer').json())
 
         if request.method == 'PUT':
             if arguments.get('id'):
                 request_json = request.json
-                requests.put('http://127.0.0.1:5001/customer', params={'id': arguments.get('id')},
+                requests.put('http://0.0.0.0:5001/customer', params={'id': arguments.get('id')},
                              json={'name': request_json['name'], 'email': request_json['email'],
                                    'phone_number': request_json['phone_number'],
                                    'billing_address': request_json['billing_address'],
@@ -90,7 +90,7 @@ def device_output(*args):
 
         if request.method == 'POST':
             request_json = request.json
-            requests.put('http://127.0.0.1:5001/customer',
+            requests.put('http://0.0.0.0:5001/customer',
                          json={'name': request_json['name'], 'email': request_json['email'],
                                'phone_number': request_json['phone_number'],
                                'billing_address': request_json['billing_address'],
@@ -99,9 +99,9 @@ def device_output(*args):
 
         if request.method == 'DELETE':
             if arguments.get('id'):
-                requests.delete('http://127.0.0.1:5001/customer', params={'id': arguments.get('id')})
+                requests.delete('http://0.0.0.0:5001/customer', params={'id': arguments.get('id')})
             else:
                 'Id needed'
 
 
-app.run(host='127.0.0.1', port=5003)
+app.run(host='0.0.0.0', port=5003)

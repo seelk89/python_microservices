@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, request
-from product_api.data.product_repository import ProductRepo
-from product_api.messages.message_listener import ProductListener
+from data.product_repository import ProductRepo
+from messages.message_listener import ProductListener
 
 app = Flask(__name__)
 
 # Instance of our in-memory database
 product_repo = ProductRepo()
+
 # Instance of our message-listener
 message_listener_created = ProductListener(1, "create", 1)
 message_listener_shipped = ProductListener(1, "shipped", 1)
@@ -41,4 +42,4 @@ def device_output(*args):
             'Id needed'
 
 
-app.run(host='127.0.0.1', port=5002)
+app.run(host='0.0.0.0', port=5002)

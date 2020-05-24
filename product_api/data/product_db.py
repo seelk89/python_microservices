@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 from sqlite3 import Error
-from threading import Lock, Thread
+from threading import Lock
 from typing import Optional
 
 
